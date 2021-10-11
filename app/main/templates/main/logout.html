@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block extend_title %}Change PWD |{% endblock %}
+
+{% block content %}
+<main class="page__content">
+    <section class="section wrapper--form wrapper--centered">
+        <div class="card card--form">
+            <div class="section--centered">
+                <h1 class="title--main">Log Out</h1>
+                <div class="main__intro wrapper--centered">
+                    <p>Your are now logged out. You may go ahead and <a href="{% url 'login' %}">sign in</a> or <a href="{% url 'register' %}">create an account</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

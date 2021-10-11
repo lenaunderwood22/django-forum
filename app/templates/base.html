@@ -1,4 +1,5 @@
 {% load static i18n %}
+
 {% load render_bundle from webpack_loader %}
 {% get_current_language as LANGUAGE_CODE %}
 
@@ -13,7 +14,8 @@
         content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' />
 
     <!-- Optional CSS -->
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> -->
+    <link rel="stylesheet" type="text/css" href="{% static 'app/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
 
     <!-- Main CSS -->
@@ -25,10 +27,52 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-dark bg-dark">
-            <span class="navbar-brand mb-0 h1"><a class="text-light" href="{% url 'home' %}">Django Forum</a></span>
-        </nav>
+    <header class="header">
+        <div class="header__upper column column--spaced column--centered wrapper--main">
+          <a href="{% url 'home' %}" class="header__logo">Django Forum</a>
+          
+            <form class="header__search" method="get" action="{% url 'topic_list' %}">
+              <input type="text" class="search__input" placeholder="Search forum" name="search_query">
+              <div class="search__submit">
+                <input type="submit" value="Search" for="search_query">
+                <span class="submit__icon">
+                  <img src="{% static 'img/search.svg' %}" alt="Image search"/>
+                </span>
+              </div>
+            </form>
+
+          <nav class="header__menu">
+              <span class="hide">Navigation menu</span>
+              <ul class="menu__list column column--centered">
+                
+                {% if 'topics' in request.path %}<li class="menu__item--current">
+                {% else %} <li class="menu__item">{% endif %}
+                  <a href="{% url 'topic_list' %}">Topics</a>
+                </li>
+    
+                {% if 'register' in request.path %}<li class="menu__item--current">
+                  {% else %} <li class="menu__item">{% endif %}
+                  <a href="{% url 'register' %}">Sign Up</a>
+                </li>
+    
+                {% if 'login' in request.path %}<li class="menu__item--current">
+                  {% else %} <li class="menu__item">{% endif %}
+                  <a href="{% url 'login' %}">Log In</a>
+                </li>
+    
+                <li>
+                  <a href="{% url 'profile' %}">
+                    {% if request.user.avatar %}
+                      <img src="{{ request.user.get_avatar_url }}" alt="Profile Photo" class="menu__profile"/>
+                    {% else %}
+                      {% load static %}
+                      <img src="{% static 'img/avatar.png' %}" alt="Profile Photo" class="menu__profile"/>
+                    {% endif %}
+                  </a>
+                </li>
+              </ul>
+            </nav>
+        </div>
     </header>
 
     <div class="content">
@@ -36,8 +80,13 @@
         {% endblock %}
     </div>
 
-    <footer class="bg-dark text-center text-muted">
-        © {% now "Y" %} Copyright <a href="https://github.com/duboisR" class="text-light">duboisR</a>
+    <footer class="section--centered">
+      <h2 class="hide">Pied de page</h2>
+
+      <p class="footer__disclaimer">© 2021 Copyright
+        <a href="https://github.com/duboisR/django-forum" target="_blank" title="Visiter le profil GitHub de Romain Dubois">duboisR</a> &
+        <a href="https://github.com/AxelCardinaels" target="_blank" title="Visiter le profil GitHub de Axel Cardinaels">AxelCardinaels</a>
+      </p>    
     </footer>
 
     <!-- Optional JavaScript -->

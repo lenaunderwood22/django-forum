@@ -3,7 +3,6 @@ from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.translation import ugettext_lazy as _
 
-
 # Custom Auth
 # https://docs.djangoproject.com/fr/3.0/topics/auth/customizing/
 class UserManager(BaseUserManager):
@@ -39,6 +38,10 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+USER_STATUS_OPTIONS = (
+    ('Newbie', 'Newbie'), 
+    ('Pro', 'Pro')
+)
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -60,7 +63,15 @@ class User(AbstractUser):
         max_length=255,
     )
 
-    username = None
+    username = models.CharField(
+        max_length=200,
+        default="anonymous"
+    )
+    status  = models.CharField(
+        choices=USER_STATUS_OPTIONS, 
+        max_length=200, 
+        default="Newbie")
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

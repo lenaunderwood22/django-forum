@@ -3,31 +3,79 @@
 {% block extend_title %}Sign up |{% endblock %}
 
 {% block content %}
-<div class="col-6 mx-auto pt-5">
-    <div class="border rounded p-4">
-        <h3 class="mb-5 text-center">Sign up</h3>
-        <form>
-            <div class="form-group">
-                <input type="text" name="username" autofocus="false" placeholder="Email" class="form-control"
-                    required="" id="id_username">
+<body>
+    <main class="page__content">
+        <section class="section wrapper--form wrapper--centered">
+            <div class="card card--form">
+                <div class="section--centered">
+                    <h1 class="title--header">Sign up</h1>
+                </div>
+                {% if not request.user.is_authenticated %}
+                <div class="form__container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="email">Email</label>
+                                <input type="text" name="email" autofocus="false" placeholder="Email" class="input--classic input--text" 
+                                required="" id="id_email">
+                            </div>
+                        </div>
+                        
+                        <div class="form__line column column--spaced">
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="first_name">First Name</label>
+                                    <input type="text" name="first_name" autofocus="false" placeholder="First name" class="input--classic input--text" 
+                                    id="id_first_name">
+                                </div>
+                            </div>
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="last_name">Last Name</label>
+                                    <input type="text" name="last_name" autofocus="false" placeholder="Last name" class="input--classic input--text" 
+                                    id="id_last_name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="username">Username</label>
+                                <input type="text" name="username" autofocus="false" placeholder="username" class="input--classic input--text" 
+                                id="id_username">
+                            </div>
+                        </div>
+
+                        <div class="form__line column column--spaced">
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="password">Password</label>
+                                    <input type="password" name="password" autofocus="false" placeholder="Password" class="input--classic input--text" 
+                                    required="" id="id_password">
+                                </div>
+                            </div>
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="confirm_password">Confirm Password</label>
+                                    <input type="password" name="confirm_password" autofocus="false" placeholder="Confirm Password" class="input--classic input--text" 
+                                    required="" id="id_confirm_password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__submit">
+							<input type="submit" class="btn btn--primary btn--full" value="Register" />
+						</div>
+                    </form>
+                    {% else %}
+                    <div class="main__intro wrapper--centered">
+                        <p>You are already logged in.  To create another account, first <a class="text-primary" href="{% url 'logout' %}">log out</a>.</p>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="form-group">
-                <input type="password" name="password" autofocus="false" placeholder="Password" class="form-control"
-                    required="" id="id_password">
-            </div>
-            <div class="form-group">
-                <input type="confirm_password" name="confirm_password" autofocus="false" placeholder="Confirm Password" class="form-control"
-                    required="" id="id_confirm_password">
-            </div>
-            <button type="submit" class="btn btn-lg btn-primary btn-round btn-block btn-loading shadow-sm mt-4">
-                Register
-            </button>
-        </form>
-        <hr class="my-5">
-        <small class="d-block text-center">
-            Already have an account ?
-            <a class="text-primary" href="javascript:void(0)">Sign in</a>
-        </small>
-    </div>
-</div>
+        </section>
+    </main>
+</body>
 {% endblock %}

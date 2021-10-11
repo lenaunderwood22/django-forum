@@ -3,30 +3,36 @@
 {% block extend_title %}Change PWD |{% endblock %}
 
 {% block content %}
-<div class="col-6 mx-auto pt-5">
-    <div class="border rounded p-4">
-        <h3 class="mb-5 text-center">Change password</h3>
+<main class="page__content">
+    <section class="section wrapper--form wrapper--centered">
+        <div class="card card--form">
+            <div class="section--centered">
+                <h1 class="title--header">Change password</h1>
+            </div>
+            <div class="form__container">
+                <form method='post' action="{% url 'reset_pwd_complete' %}">
+                    {% csrf_token %}
+                    <div class="form__line">
+                        <div class="form__part form__part--full">
+                            <label class="form__label" for="password">New password</label>
+                            <input type="password" name="password" autofocus="false" placeholder="Password" class="input--classic input--text"
+                                required="" id="id_password">
+                        </div>
+                    </div>
+                    <div class="form__line">
+                        <div class="form__part form__part--full">
+                            <label class="form__label" for="confirm_password">Confirm password</label>
+                            <input type="password" name="confirm_password" autofocus="false" placeholder="Password" class="input--classic input--text"
+                                required="" id="id_confirm_password">
+                        </div>
+                    </div>
 
-        {% if validlink %}
-        <p>
-            The password reset link was invalid, possibly because it has already been used.
-            Please request a new password reset.
-        </p>
-        {% else %}
-        <form>
-            <div class="form-group">
-                <input type="password" name="password" autofocus="false" placeholder="Password" class="form-control"
-                    required="" id="id_password">
+                    <div class="form__submit">
+                        <input  type="submit" class="btn btn--primary btn--full" value="Submit" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <input type="confirm_password" name="confirm_password" autofocus="false" placeholder="Confirm Password"
-                    class="form-control" required="" id="id_confirm_password">
-            </div>
-            <button type="submit" class="btn btn-lg btn-primary btn-round btn-block btn-loading shadow-sm mt-4">
-                Change password
-            </button>
-        </form>
-        {% endif %}
-    </div>
-</div>
+        </div>
+    </section>
+</main>
 {% endblock %}

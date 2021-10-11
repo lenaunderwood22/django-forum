@@ -4,34 +4,102 @@
 {% block extend_title %}Profil |{% endblock %}
 
 {% block content %}
-<div class="col-6 mx-auto pt-5">
-    <div class="border rounded p-4">
-        <h3 class="mb-5 text-center">Profil</h3>
-        <form>
-            <div class="form-group">
-                <div id="profile-container">
-                    <image id="profileImage" src="{% static 'img/avatar.png' %}" />
-                </div>
-                <input id="imageUpload" type="file" name="profile_photo" placeholder="Photo" required="" capture>    
-            </div>
-            
-            <div class="form-group">
-                <input type="text" name="username" autofocus="false" placeholder="Email" class="form-control"
-                    required="" id="id_username">
-            </div>
-            <div class="form-group">
-                <input type="text" name="first_name" autofocus="false" placeholder="First Name" class="form-control"
-                    required="" id="id_first_name">
-            </div>
-            <div class="form-group">
-                <input type="text" name="last_name" autofocus="false" placeholder="Last Name" class="form-control"
-                    required="" id="id_last_name">
-            </div>
+<body>
+    <header class="header">
+        <div class="header__content header__content--user">
+			<span class="banner--user">
+			</span>
 
-            <button type="submit" class="btn btn-lg btn-primary btn-round btn-block btn-loading shadow-sm mt-4">
-                Update
-            </button>
-        </form>
-    </div>
-</div>
+		</div>
+    </header>
+
+    <main class="page__content">
+        {% if request.user.is_authenticated %}
+            <div class="column column--centered" style="float: right; margin-right: 5%; margin-top: 2.5%;">
+                <a href="{% url 'logout' %}" class="btn btn--primary"><span>Sign out</span></a>
+            </div>
+        {% endif %}
+        <section class="section wrapper--form wrapper--centered">
+
+            <div class="card card--form">
+    
+                <div class="section--centered">
+                    <h1 class="title--header">My Profile</h1>
+                </div>
+                {% if request.user.is_authenticated %}
+
+                <div class="form__container">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form__line">
+                            <div class = "section--centered">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="imageUpload">Photo</label>
+                                    <label class="profile" for="imageUpload">
+                                        <img src="{{ user.get_avatar_url }}">
+                                    </label>
+                                    <input type="file" id="imageUpload" name="profile_photo" accept="image/*" onchange="form.submit()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label for="email" class="form__label">Email</label>
+                                <input type="text" name="email" autofocus="false" value="{{ user.email }}" class="input--classic input--text"
+                                    required="" id="id_email">
+                            </div>
+                        </div>
+
+                        <div class="form__line column column--spaced">
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label for="first_name" class="form__label">First Name</label>
+                                    <input type="text" name="first_name" autofocus="false" value="{{ user.first_name }}" class="input--classic input--text"
+                                        id="id_first_name">
+                                </div>
+                            </div>
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label for="last_name" class="form__label">Last Name</label>
+                                    <input type="text" name="last_name" autofocus="false" value="{{ user.last_name }}" class="input--classic input--text"
+                                        id="id_last_name">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label for="username" class="form__label">Username</label>
+                                <input type="text" name="username" autofocus="false" value="{{ user.username }}" class="input--classic input--text"
+                                    id="id_username">
+                            </div>
+                        </div>
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label for="status" class="form__label">Status</label>
+                                <div>
+                                    <select name="status" id="id_status" class="input--classic input--select" size=1>
+                                        <option value="Newbie">Newbie</option>
+                                        <option value="Pro">Pro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form__submit">
+                            <input type="submit" class="btn btn--primary btn--full" value="Update"/>
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                    <div class="main__intro wrapper--centered">
+                        <p>To view your profile, you need to <a href="{% url 'login' %}">sign in</a>.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+
 {% endblock %}

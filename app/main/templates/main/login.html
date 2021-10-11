@@ -3,30 +3,48 @@
 {% block extend_title %}Sign in |{% endblock %}
 
 {% block content %}
-<div class="col-6 mx-auto pt-5">
-    <div class="border rounded p-4">
-        <h3 class="mb-5 text-center">Sign in</h3>
-        <form>
-            <div class="form-group">
-                <input type="text" name="username" autofocus="false" placeholder="Email" class="form-control"
-                    required="" id="id_username">
+<main class="page__content">
+    <section class="section wrapper--form wrapper--centered">
+        <div class="card card--form">
+            <div class="section--centered">
+                <h1 class="title--header">Sign in</h1>
             </div>
-            <div class="form-group">
-                <input type="password" name="password" autofocus="false" placeholder="Password" class="form-control"
-                    required="" id="id_password">
+
+            {% if not request.user.is_authenticated %}
+            <div class="form__container">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form__line">
+                        <div class="form__part form__part--full">
+                            <label class="form__label" for="email">Email</label>
+                            <input type="text" name="email" autofocus="false" placeholder="Email" class="input--classic input--text"
+                            required="" id="id_email">
+                        </div>
+                    </div>
+
+                    <div class="form__line">
+                        <div class="form__part form__part--full">
+                            <label class="form__label" for="password">Password</label>
+                            <input type="password" name="password" autofocus="false" placeholder="Password" class="input--classic input--text"
+                            required="" id="id_password">
+                        </div>
+                    </div>
+
+                    <div class="form__submit">
+                        <input  type="submit" class="btn btn--primary btn--full" value="Log In" />
+                        <div class="section--centered">
+                            <a href="{% url 'reset_pwd_form' %}" class="password__reset">Forgot password?</a>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <small class="d-block mt-4 text-center">
-                <a class="text-dark" href="javascript:void(0)">Forgot password ?</a>
-            </small>
-            <button type="submit" class="btn btn-lg btn-primary btn-round btn-block btn-loading shadow-sm mt-4">
-                Login
-            </button>
-        </form>
-        <hr class="my-5">
-        <small class="d-block text-center">
-            Don't have account ?
-            <a class="text-primary" href="javascript:void(0)">Sign up</a>
-        </small>
-    </div>
-</div>
+            {% else %}
+                <div class="main__intro wrapper--centered">
+                    <p>You are already logged in.  To sign into another account, first <a class="text-primary" href="{% url 'logout' %}">sign out</a>.</p>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </section>
+</main>
 {% endblock %}

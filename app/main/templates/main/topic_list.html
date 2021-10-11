@@ -3,103 +3,112 @@
 {% block extend_title %}Topics |{% endblock %}
 
 {% block content %}
-<div class="topic">
-    <div class="inner-wrapper">
-        <!-- Inner sidebar -->
-        <div class="inner-sidebar">
-            <!-- Inner sidebar header -->
-            <div class="inner-sidebar-header justify-content-center">
-                <button class="btn btn-primary has-icon btn-block" type="button">New topic</button>
-            </div>
-            <!-- /Inner sidebar header -->
-
-            <!-- Inner sidebar body -->
-            <div class="inner-sidebar-body p-0">
-                <div class="p-3 h-100" data-simplebar="init">
-                    <nav class="nav nav-pills nav-gap-y-1 flex-column">
-                        <a href="javascript:void(0)" class="nav-link nav-link-faded has-icon active">
-                            All Threads
-                        </a>
-                        <a href="javascript:void(0)" class="nav-link nav-link-faded has-icon">Solved</a>
-                        <a href="javascript:void(0)" class="nav-link nav-link-faded has-icon">Unsolved</a>
-                        <a href="javascript:void(0)" class="nav-link nav-link-faded has-icon">
-                            No replies yet
-                        </a>
-                    </nav>
-                </div>
-            </div>
-            <!-- /Inner sidebar body -->
-        </div>
-        <!-- /Inner sidebar -->
-
-        <!-- Inner main -->
-        <div class="inner-main">
-            <!-- Inner main header -->
-            <div class="inner-main-header">
-                <span class="input-icon input-icon-sm ml-auto w-auto">
-                    <form>
-                        <div class="form-row align-items-center">
-                            <div class="col-auto">
-                                <input type="text" class="form-control bg-gray-200 border-gray-200 shadow-none"
-                                    placeholder="Search forum" />
-                            </div>
-                            <div class="col-auto">
-                                <input type="submit" class="btn btn-primary has-icon btn-block" value="Search" />
-                            </div>
-                        </div>
-                    </form>
-                </span>
-            </div>
-            <!-- /Inner main header -->
-
-            <!-- Inner main body -->
-
-            <!-- Forum List -->
-            <div class="inner-main-body p-2 p-sm-3 collapse forum-content show">
-                {% for i in '*****' %}
-                <div class="card mb-2">
-                    <div class="card-body p-2 p-sm-3">
-                        <div class="media forum-item">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="mr-3 rounded-circle"
-                                width="50" alt="User" />
-                            <div class="media-body">
-                                <h6 class="text-body"><a class="text-dark" href="javascript:void(0)">Realtime fetching data</a></h6>
-                                <p class="text-secondary">
-                                    lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-                                </p>
-                                <p class="text-muted">
-                                    <span class="text-secondary font-weight-bold">drewdan</span>
-                                    replied
-                                    <span class="text-secondary font-weight-bold">13 minutes ago</span>
-                                </p>
-                            </div>
-                            <div class="text-muted small text-center align-self-center">
-                                <span><i class="far fa-comment ml-2"></i> 3</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <!-- Pagination -->
-                <ul class="pagination pagination-sm pagination-circle justify-content-center my-4">
-                    <li class="page-item disabled">
-                        <span class="page-link has-icon"><i class="fas fa-chevron-left"></i></span>
+<body>
+    <header class="header">
+        <div class="header__content wrapper--main">
+            <nav>
+                <span class="hide"> Fil D'ariane</span>
+                <ul class="breadcrumb__list column column--centered">
+                    <li class="breadcrumb__item">
+                        <a href="{% url 'home' %}">Home</a>
                     </li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="javascript:void(0)">2</a></li>
-                    <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link has-icon" href="javascript:void(0)">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
+                    <li class="breadcrumb__item breadcrumb__item--current">
+                        <span>All topics</span>
                     </li>
                 </ul>
-                <!-- /Pagination -->
-            </div>
-            <!-- /Forum List -->
+            </nav>
+            <h1 class="title--header">
+                All subjects
+            </h1>
         </div>
-        <!-- /Inner main -->
-    </div>
-</div>
+    </header>
+
+    <main class="page__content forum__content column--free wrapper--main">
+        <a href="{% url 'topic_create' %}" class="topic__create"><span>+</span></a>
+
+        <div class="forum__main">
+            <section>
+                {% if latest_posts %}
+                <ul class="topics__list">
+                    {% for topic in latest_posts %}
+                        <li class="topic__item card item__wrap">
+                            <a href="{% url 'topic_detail' topic.id %}" title="See details">
+                                <span class="hide">See details</span>
+                            </a>
+                            <article class="topic__article">
+                                <h3 class="title--topic">{{ topic.title }}</h3>
+                                <div class="topic__short">
+                                    {{ topic.content }}
+                                </div>
+                                <div class="topic__author column column--spaced">
+                                    <div class="topic__recap column column--centered">
+                                        <img class="author__picture author__picture--small"
+                                        src="{{ topic.author.get_avatar_url }}">
+                                        <p class="author__name">Posted by 
+                                            <a href="javascript:void(0)" class="author__link">{{ topic.author.username }}</a> 
+                                            {{ topic.pub_date|timesince }} ago</p>
+                                    </div>
+                                </div>
+                            </article>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="pagination__container column column--centered">
+                    {% if latest_posts.has_previous %}
+                        <a href="?page={{ latest_posts.previous_page_number }}" class="pagination__btn pagination__arrow"><span><</span></a>
+                    {% else %}
+                        <a href="?page=1" class="pagination__btn pagination__arrow disabled"><span><</span></a>
+                    {% endif %}
+                    <ul class="pagination__list column column--centered">
+                        {% for i in latest_posts.paginator.page_range %}
+                            {% if latest_posts.number == i%}<li class="pagination__item pagination__item--current">
+                            {% else %}<li class="pagination__item">{% endif %}
+                            <a href="?page={{ i }}" class="pagination__link">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if latest_posts.has_next %}
+                        <a href="?page={{ latest_posts.next_page_number }}" class="pagination__btn pagination__arrow"><span>></span></a>
+                    {% else %}
+                        <a href="?page={{ latest_posts.paginator.num_pages }}" class="pagination__btn pagination__arrow disabled"><span>></span></a>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <aside class="forum__aside">
+            <nav class="categories__menu">
+                <h2 class="title--category">Categories</h2>
+                <ul class="categories__list">
+                    {% if 'solved' not in request.path and 'no_replies' not in request.path %}
+                    <li class="category__item category__item--current">
+                    {% else %} <li class="category__item"> {% endif %}
+                        <a href="{% url 'topic_list' filter='all' %}" class="category__link">All threads</a>
+                    </li>
+    
+                    {% if 'solved' in request.path and 'unsolved' not in request.path %}
+                    <li class="category__item category__item--current">
+                    {% else %} <li class="category__item"> {% endif %}
+                        <a href="{% url 'topic_list' filter='solved' %}" class="category__link">Solved</a>
+                    </li>
+    
+                    {% if 'unsolved' in request.path %}
+                    <li class="category__item category__item--current">
+                    {% else %} <li class="category__item"> {% endif %}
+                        <a href="{% url 'topic_list' filter='unsolved' %}" class="category__link">Unsolved</a>
+                    </li>
+    
+                    {% if 'no_replies' in request.path %}
+                    <li class="category__item category__item--current">
+                    {% else %} <li class="category__item"> {% endif %}
+                        <a href="{% url 'topic_list' filter='no_replies' %}" class="category__link">No replies</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+    </main>
+</body>
 {% endblock %}
+
