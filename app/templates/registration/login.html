@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<head>
+    <title>Log In | Django Forum</title>
+</head>
+
+<body>
+    {% if messages %}
+    <div class="message__container">
+        {% for message in messages %}
+            <div class="message__success">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="page__content">
+        <section class="section wrapper--form wrapper--centered">
+            <div class="card card--form">
+                <div class="section--centered">
+                    <h1 class="title--header">Sign in</h1>
+                </div>
+
+                {% if not request.user.is_authenticated %}
+                <div class="form__container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <!-- {{ form.errors }} -->
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="username">Email</label>
+                                <input type="text" name="username" autofocus="false" placeholder="Email" class="input--classic input--text"
+                                required="" id="id_username">
+                                {% for k, v in form.errors.items %}
+                                    {% if k == 'username' %}
+                                        <div class="message__error">{{ v }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="password">Password</label>
+                                <input type="password" name="password" autofocus="false" placeholder="Password" class="input--classic input--text"
+                                required="" id="id_password">
+                                {% for k, v in form.errors.items %}
+                                    {% if k == 'password' %}
+                                        <div class="message__error">{{ v }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="message__container">
+                            {% for k, v in form.errors.items %}
+                                {% if k == '__all__' %}
+                                    <div class="message__error">{{ v }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="form__submit">
+                            <input  type="submit" class="btn btn--primary btn--full" value="Log In" />
+                            <div class="section--centered">
+                                <a href="{% url 'password_reset' %}" class="password__reset" title="Forgot your password?">Forgot password?</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                    <div class="main__intro wrapper--centered">
+                        <p>You are already logged in.  To sign into another account, first <a class="text-primary" href="{% url 'logout' %}" title="Sign out">sign out</a>.</p>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+<!-- {% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Log Out</a></p>
+  <p><a href="{% url 'password_reset' %}">Reset Password</a></p>
+{% else %}
+    <h2>Log In</h2>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log In</button>
+    </form>
+{% endif %} -->
+</body>
+{% endblock %}

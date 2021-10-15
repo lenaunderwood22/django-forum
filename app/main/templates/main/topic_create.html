@@ -3,6 +3,10 @@
 {% block extend_title %}Create Topic |{% endblock %}
 
 {% block content %}
+<head>
+    <title>Create a New Topic | Django Forum</title>
+</head>
+
 <body>
     <header class="header">
         <div class="header__content wrapper--main">
@@ -10,10 +14,10 @@
                 <span class="hide"> Fil D'ariane</span>
                 <ul class="breadcrumb__list column column--centered">
                     <li class="breadcrumb__item">
-                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'home' %}" title="Home">Home</a>
                     </li>
                     <li class="breadcrumb__item">
-                        <a href="{% url 'topic_list' filter='all' %}">All topics</a>
+                        <a href="{% url 'topic_list' filter='all' %}" title="View all topics">All topics</a>
                     </li>
                     <li class="breadcrumb__item breadcrumb__item--current">
                         <span>Create a new topic</span>
@@ -29,30 +33,42 @@
                 <h1 class="title--heaer">Create a new topic</h1>
                 {% if request.user.is_authenticated %}
                     <div class="form__container">
-                        <form method="post" action="{% url 'topic_create' %}">
+                        <!-- <form method="post" action="{% url 'topic_create' %}"> -->
+                        <form method="post">
                             {% csrf_token %}
+                            <!-- {{ form_errors }} -->
                             <div class="form__line">
                                 <div class="form__part form__part--full">
                                     <label class="form__label" for="title">Your title</label>
-                                    <input type="text" class="input--classic input--text" id="title" name="title" required>
+                                    <input type="text" class="input--classic input--text" id="title" name="title" placeholder="Your title" required>
+                                    {% for k, v in form_errors.items %}
+                                        {% if k == 'title' %}
+                                            <div class="message__error">{{ v }}</div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
 
                             <div class="form__line">
                                 <div class="form__part form__part--full">
                                     <label class="form__label" for="description">Your message</label>
-                                    <textarea class="input--classic input--text" id="description" name="description" required></textarea>
+                                    <textarea class="input--classic input--text" id="description" name="description" placeholder="Your message" required></textarea>
+                                    {% for k, v in form_errors.items %}
+                                        {% if k == 'content' %}
+                                            <div class="message__error">{{ v }}</div>
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
                             </div>
 
                             <div class="form__submit">
-                                <input type="submit" class="bnt btn--primary btn--full" value="Create">
+                                <input type="submit" class="btn btn--primary btn--full" value="Create">
                             </div>
                         </form>
                     </div>
                 {% else %}
                     <div class="main__intro wrapper--centered">
-                        <p><a href="{% url 'login' %}">Sign in</a> to create a new topic.</p>
+                        <p><a href="{% url 'login' %}?next={{request.path}}" title="Sign in">Sign in</a> to create a new topic.</p>
                     </div>
                 {% endif %}
             </section>
@@ -65,25 +81,25 @@
                     {% if 'solved' not in request.path and 'no_replies' not in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='all' %}" class="category__link">All threads</a>
+                        <a href="{% url 'topic_list' filter='all' %}" class="category__link" title="View all topics">All threads</a>
                     </li>
     
                     {% if 'solved' in request.path and 'unsolved' not in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='solved' %}" class="category__link">Solved</a>
+                        <a href="{% url 'topic_list' filter='solved' %}" class="category__link" title="View solved topics">Solved</a>
                     </li>
     
                     {% if 'unsolved' in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='unsolved' %}" class="category__link">Unsolved</a>
+                        <a href="{% url 'topic_list' filter='unsolved' %}" class="category__link" title="View unsolved topics">Unsolved</a>
                     </li>
     
                     {% if 'no_replies' in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='no_replies' %}" class="category__link">No replies</a>
+                        <a href="{% url 'topic_list' filter='no_replies' %}" class="category__link" title="View topics with no replies">No replies</a>
                     </li>
                 </ul>
             </nav>

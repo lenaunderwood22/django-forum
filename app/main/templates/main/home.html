@@ -3,12 +3,30 @@
 {% block extend_title %}Homepage |{% endblock %}
 
 {% block content %}
-<main class="page__content">
-  <section class="section section--centered">
-    <h1 class="title--main">Django Forum</h1>
-    <div class="main__intro wrapper--centered">
-      <p>Bienvenue sur le template HTML du ta formation ! Le but de ce dernier va être de te familiariser avec le HTML ainsi que la notation BEM employée chez nous. De plus, cela te permettra d'observer les réflexions UX/UI vitales afin d'offrir un projet de qualité à nos clients adorés 🤝. Bon amusement !</p>
-    </div>
-  </section>
-</main>
+<head>
+  <title>Django Forum Home</title>
+</head>
+<body>
+  <main class="page__content">
+    <section class="section section--centered">
+      <h1 class="title--main">Django Forum</h1>
+      <div class="main__intro wrapper--centered">
+        <p>This is the home page of the Django forum.</p>
+        {% if request.user.is_authenticated %}
+          <p>Welcome <a href="{% url 'view_profile' %}" class="author__link">{{ request.user.user_username }}</a>!</p>
+          <!-- <p><a href="{% url 'logout' %}" title="Sign out">Sign out</a></p> -->
+          <span><a href="{% url 'logout' %}" class="btn btn--primary" title="Log Out" style="margin-top: 10px;">Log Out</a></span>
+        {% else %}
+          <!-- <p>You are not currently signed in.  <a href="{% url 'login' %}" title="Sign in">Sign in</a> here.</p> -->
+          <p>You are not currently signed in.</p>
+          <a href="{% url 'login' %}" class="btn btn--primary" title="Log In" style="margin-top: 10px;">Log In</a>
+          <p></p>
+          <a href="{% url 'signup' %}" class="btn btn--primary" title="Create Account" style="margin-top: 10px;">Create Account</a>
+
+        {% endif %}
+        <!-- <p>Bienvenue sur le template HTML du ta formation ! Le but de ce dernier va être de te familiariser avec le HTML ainsi que la notation BEM employée chez nous. De plus, cela te permettra d'observer les réflexions UX/UI vitales afin d'offrir un projet de qualité à nos clients adorés 🤝. Bon amusement !</p> -->
+      </div>
+    </section>
+  </main>
+</body>
 {% endblock %}

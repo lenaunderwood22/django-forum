@@ -2,10 +2,15 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-import user.models
+# import user.models
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
-@admin.register(user.models.User)
+# @admin.register(user.models.User)
+@admin.register(get_user_model())
+
 class UserAdmin(BaseUserAdmin):
 
     # The fields to be used in displaying the User model.
@@ -16,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': (
-            'avatar', 'first_name', 'last_name', 'username', 'status',
+            'avatar', 'first_name', 'last_name', 'user_username', 'status',
         )}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
@@ -29,7 +34,7 @@ class UserAdmin(BaseUserAdmin):
             'classes': ('wide',),
             'fields': (
                 'email', 'password1', 'password2', 'avatar',
-                'first_name', 'last_name', 'username', 'status',
+                'first_name', 'last_name', 'user_username', 'status',
             ),
         }),
     )

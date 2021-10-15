@@ -63,10 +63,11 @@ class User(AbstractUser):
         max_length=255,
     )
 
-    username = models.CharField(
+    user_username = models.CharField(
         max_length=200,
         default="anonymous"
     )
+
     status  = models.CharField(
         choices=USER_STATUS_OPTIONS, 
         max_length=200, 
@@ -74,6 +75,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    username = None
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', ]
 

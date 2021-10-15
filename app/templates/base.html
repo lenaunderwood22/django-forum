@@ -22,17 +22,27 @@
     {% render_bundle 'main' 'css' %}
 
     {% block extend_css %}{% endblock %}
+    <!-- {% if breadcrumbs %}
+    <div class="container">
+        {% include "dynamic_breadcrumbs/breadcrumbs.html" with breadcrumbs=breadcrumbs%}
+    </div>
+    {% endif %} -->
 
-    <title>{% block extend_title %}{% endblock %}ReadMeAStory</title>
+    <!-- <title>Django Forum</title> -->
+    <!-- <title>{% block extend_title %}{% endblock %}ReadMeAStory</title> -->
 </head>
 
 <body>
     <header class="header">
         <div class="header__upper column column--spaced column--centered wrapper--main">
-          <a href="{% url 'home' %}" class="header__logo">Django Forum</a>
+          <a href="{% url 'home' %}" class="header__logo" title="Home">Django Forum</a>
           
             <form class="header__search" method="get" action="{% url 'topic_list' %}">
-              <input type="text" class="search__input" placeholder="Search forum" name="search_query">
+              {% if search_query %}
+                <input type="text" class="search__input" placeholder="Search forum" name="search_query" value="{{ search_query }}">
+              {% else %}
+                <input type="text" class="search__input" placeholder="Search forum" name="search_query">
+              {% endif %}
               <div class="search__submit">
                 <input type="submit" value="Search" for="search_query">
                 <span class="submit__icon">
@@ -47,29 +57,37 @@
                 
                 {% if 'topics' in request.path %}<li class="menu__item--current">
                 {% else %} <li class="menu__item">{% endif %}
-                  <a href="{% url 'topic_list' %}">Topics</a>
+                  <a href="{% url 'topic_list' %}" title="View all topics">Topics</a>
                 </li>
-    
-                {% if 'register' in request.path %}<li class="menu__item--current">
-                  {% else %} <li class="menu__item">{% endif %}
-                  <a href="{% url 'register' %}">Sign Up</a>
-                </li>
-    
-                {% if 'login' in request.path %}<li class="menu__item--current">
-                  {% else %} <li class="menu__item">{% endif %}
-                  <a href="{% url 'login' %}">Log In</a>
-                </li>
-    
-                <li>
-                  <a href="{% url 'profile' %}">
-                    {% if request.user.avatar %}
-                      <img src="{{ request.user.get_avatar_url }}" alt="Profile Photo" class="menu__profile"/>
-                    {% else %}
-                      {% load static %}
-                      <img src="{% static 'img/avatar.png' %}" alt="Profile Photo" class="menu__profile"/>
-                    {% endif %}
-                  </a>
-                </li>
+                
+                {% if not request.user.is_authenticated %}
+                  {% if 'register' in request.path or 'signup' in request.path %}<li class="menu__item--current">
+                    {% else %} <li class="menu__item">{% endif %}
+                    <a href="{% url 'signup' %}" title="Sign up">Sign Up</a>
+                  </li>
+      
+                  {% if 'login' in request.path %}<li class="menu__item--current">
+                    {% else %} <li class="menu__item">{% endif %}
+                    <a href="{% url 'login' %}" title="Log in">Log In</a>
+                  </li>
+                
+                {% else %}
+                  {% if 'logout' in request.path %}<li class="menu__item--current">
+                    {% else %} <li class="menu__item">{% endif %}
+                    <a href="{% url 'logout' %}" title="Log Out">Log Out</a>
+                  </li>
+                  
+                  <li>
+                    <a href="{% url 'view_profile' request.user.id %}" title="View my profile">
+                      {% if request.user.avatar %}
+                        <img src="{{ request.user.get_avatar_url }}" alt="Profile Photo" class="menu__profile"/>
+                      {% else %}
+                        {% load static %}
+                        <img src="{% static 'img/avatar.png' %}" alt="Profile Photo" class="menu__profile"/>
+                      {% endif %}
+                    </a>
+                  </li>
+                {% endif %}
               </ul>
             </nav>
         </div>

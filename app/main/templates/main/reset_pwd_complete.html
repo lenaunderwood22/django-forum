@@ -10,8 +10,15 @@
                 <h1 class="title--header">Change password</h1>
                 <div class="main__intro wrapper--centered">
                     <p>
-                        Your password has been set. You may go ahead and <a href="{% url 'login' %}">sign in</a> now.
+                        Your password has been set. You may go ahead and sign in</a> now.
                     </p>
+                    <form action="{% url 'login' %}">
+
+                        <div class="form__submit">
+                            <input  type="submit" class="btn btn--primary btn--full" value="Page de connexion" />
+                        </div>
+            
+                    </form>
                 </div>
             </div>
         </div>

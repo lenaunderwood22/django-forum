@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<head>
+    <title>Sign Up | Django Forum</title>
+</head>
+<body>
+    <main class="page__content">
+        <section class="section wrapper--form wrapper--centered">
+            <div class="card card--form">
+                <div class="section--centered">
+                    <h1 class="title--header">Sign up</h1>
+                </div>
+                {% if not request.user.is_authenticated %}
+                <div class="form__container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <!-- {{ form.errors }} -->
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="email">Email</label>
+                                <input type="text" name="email" autofocus="false" placeholder="Email" class="input--classic input--text" 
+                                required="" id="id_email">
+                                {% for k, v in form.errors.items %}
+                                    {% if k == 'email' %}
+                                        <div class="message__error">{{ v }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="form__line column column--spaced">
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="first_name">First Name</label>
+                                    <input type="text" name="first_name" autofocus="false" placeholder="First name" class="input--classic input--text" 
+                                    id="id_first_name" required>
+                                    {% for k, v in form.errors.items %}
+                                        {% if k == 'first_name' %}
+                                            <div class="message__error">{{ v }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="last_name">Last Name</label>
+                                    <input type="text" name="last_name" autofocus="false" placeholder="Last name" class="input--classic input--text" 
+                                    id="id_last_name" required>
+                                    {% for k, v in form.errors.items %}
+                                        {% if k == 'last_name' %}
+                                            <div class="message__error">{{ v }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__line">
+                            <div class="form__part form__part--full">
+                                <label class="form__label" for="user_username">Username</label>
+                                <input type="text" name="user_username" autofocus="false" placeholder="username" class="input--classic input--text" 
+                                id="id_user_username" required>
+                                {% for k, v in form.errors.items %}
+                                    {% if k == 'user_username' %}
+                                        <div class="message__error">{{ v }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form__line column column--spaced">
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="password1">Password</label>
+                                    <input type="password" name="password1" autofocus="false" placeholder="Password" class="input--classic input--text" 
+                                    required="" id="id_password1">
+                                </div>
+                                {% for k, v in form.errors.items %}
+                                    {% if k == 'password1' %}
+                                        <div class="message__error">{{ v }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="form__part form__part--half">
+                                <div class="form__part form__part--full">
+                                    <label class="form__label" for="password2">Confirm Password</label>
+                                    <input type="password" name="password2" autofocus="false" placeholder="Confirm Password" class="input--classic input--text" 
+                                    required="" id="id_password2">
+                                    {% for k, v in form.errors.items %}
+                                        {% if k == 'password2' %}
+                                            <div class="message__error">{{ v }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__submit">
+							<input type="submit" class="btn btn--primary btn--full" value="Register" />
+						</div>
+                    </form>
+                    {% else %}
+                    <div class="main__intro wrapper--centered">
+                        <p>You are already logged in.  To create another account, first <a class="text-primary" href="{% url 'logout' %}" title="Log out">log out</a>.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+  <!-- <h2>Sign up</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+  </form> -->
+{% endblock %}

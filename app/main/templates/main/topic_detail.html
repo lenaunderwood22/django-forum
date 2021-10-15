@@ -3,18 +3,42 @@
 {% block extend_title %}Topic |{% endblock %}
 
 {% block content %}
+<head>
+    <title>Topic Details - {{ topic.title }} | Django Forum</title>
+</head>
+
 <body>
+    {% if messages %}
+    <div class="message__container">
+        {% for message in messages %}
+            <div class="message__success">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <header class="header">
         <div class="header__content wrapper--main">
             <nav>
                 <span class="hide"> Fil D'ariane</span>
                 <ul class="breadcrumb__list column column--centered">
                     <li class="breadcrumb__item">
-                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'home' %}" title="Home">Home</a>
                     </li>
                     <li class="breadcrumb__item">
-                        <a href="{% url 'topic_list' filter='all' %}">All topics</a>
+                        <a href="{% url 'topic_list' filter='all' %}" title="View all topics">All topics</a>
                     </li>
+                    {% if 'solved' in request.path or 'no_replies' in request.path or 'search_query' in request.path %}
+                        {% if 'search_query' in request.path %}
+                            <li class="breadcrumb__item breadcrumb__item"><a href="{% url 'topic_list' search_query=search_query %}" title="Search Results">Search Results</a></li>
+                        {% elif 'solved' in request.path and 'unsolved' not in request.path %}
+                            <li class="breadcrumb__item breadcrumb__item"><a href="{% url 'topic_list' filter=filter %}" title="Solved topics">Solved topics</a></li>
+                        {% elif 'unsolved' in request.path %}
+                            <li class="breadcrumb__item breadcrumb__item"><a href="{% url 'topic_list' filter=filter %}" title="Unsolved topics">Unsolved topics</a></li>
+                        {% elif 'no_replies' in request.path %}
+                            <li class="breadcrumb__item breadcrumb__item"><a href="{% url 'topic_list' filter=filter %}" title="No reply topics">No reply topics</a></li>
+                        {% endif %}
+                    {% endif %}
                     <li class="breadcrumb__item breadcrumb__item--current">
                         <span>{{ topic.title }}</span>
                     </li>
@@ -24,9 +48,16 @@
     </header>
 
     <main class="page__content forum__content column--free wrapper--main">
-        <a href="{% url 'topic_create' %}" class="topic__create"><span>+</span></a>
-
-        <div class="forum_main">
+        <!-- <a href="{% url 'topic_create' %}" class="topic__create" title="Reply to topic"><span>+</span></a> -->
+        {% if topic.solved == False %}
+            {% if request.user.is_authenticated %}
+                <a href="#reply_signed_in" class="topic__create" title="Reply to topic"><span>+</span></a>
+            {% else %}
+                <a href="#reply_signed_out" class="topic__create" title="Reply to topic"><span>+</span></a>
+            {% endif %}
+        {% endif %}
+  
+        <div class="forum__main">
             <section>
                 <header class="topic__header">
                     <div class="column column--centered" style='float: right;'>
@@ -34,7 +65,7 @@
                             <form method="post">
                                 {% csrf_token %}
                                 <div class="form__submit">
-                                    <input type="submit" class="btn btn--primary" value="Close this topic">
+                                    <input type="submit" class="btn btn--primary" value="Close this topic" title="Close this topic" name="close_topic_btn">
                                 </div>
                             </form>
                         {% else %}
@@ -50,71 +81,99 @@
                     </h1>
                     <div class="answer__header answer__header--main column column--centered">
                         <div class="picture__container">
-                            <img class="author__picture" src="{{ topic.author.get_avatar_url }}">
+                            <a href="{% url 'view_profile' topic.author.id %}"><img class="author__picture" src="{{ topic.author.get_avatar_url }}"></a>
                         </div>
                         <div class="answer__author">
                             <div class="column column--centered">
-                                <h3 class="title--author">{{ topic.author.username }}</h3>
+                                <h3 class="title--author">{{ topic.author.user_username }}</h3>
                                 <span class="author__rank">{{ topic.author.status }}</span>
                             </div>
                             <p class="answer__date">{{ topic.pub_date|timesince }}</p>
                         </div>
                     </div>
                     <div class="topic__content">
-                        <p>{{ topic.content }}</p>
+                        <p>{{ topic.content|linebreaks }}</p>
                     </div>
                 </header>
 
                 <div class="topics__answers">
-                    {% if topic.comment_set.count == 1 %}<h2 class="title--section">{{ topic.comment_set.count }} Reply</h2>
+                    {% if topic.comment_set.count == 1 %}<h2 class="title--section">1 Reply</h2>
+                    {% elif topic.comment_set.count == 0 %}<h2 class="title--section">No replies yet</h2>
                     {% else %}<h2 class="title--section">{{ topic.comment_set.count }} Replies</h2>
                     {% endif %}
 
                     {% if topic.comment_set.count > 0 %}
                     <ul class="answers__list">
-                        {% for comment in topic.comment_set.all %}
-                        <li class="answer__item">
+                        {% for comment in latest_comments %}
+                        <li class="answer__item" id="comment_{{ comment.id }}">
                             <article class="answer__article">
                                 <div class="answer__header column column--centered">
                                     <div class="picture__container">
-                                        <img class="author__picture author__picture--answer" src="{{ comment.author.get_avatar_url }}">
+                                        <a href="{% url 'view_profile' comment.author.id %}"><img class="author__picture author__picture--answer" src="{{ comment.author.get_avatar_url }}"></a>
                                     </div>
                                     <div class="answer__author">
                                         <div class="column column--centered">
-                                            <h3 class="subtitle--author">{{ comment.author.username }}</h3>
+                                            <h3 class="subtitle--author">{{ comment.author.user_username }}</h3>
                                             <span class="author__rank">{{ comment.author.status }}</span>
                                         </div>
                                         <p class="answer__date">{{ comment.pub_date|timesince }}</p>
                                     </div>
                                 </div>
                                 <div class="answer__content">
-                                    <p>{{ comment.content }}</p>
+                                    <p>{{ comment.content|linebreaks }}</p>
                                 </div>
                             </article>
                         </li>
                         {% endfor %}
                     </ul>
+                    <div class="pagination__container column column--centered">
+                        {% if latest_comments.has_previous %}
+                            <a href="?page={{ latest_comments.previous_page_number }}" class="pagination__btn pagination__arrow" title="Previous page"><span><</span></a>
+                        {% endif %}
+                        <ul class="pagination__list column column--centered">
+                            {% for i in latest_comments.paginator.page_range %}
+                                {% if latest_comments.number == i%}<li class="pagination__item pagination__item--current">
+                                {% else %}<li class="pagination__item">{% endif %}
+                                <a href="?page={{ i }}" class="pagination__link" title="Go to page {{ i }}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% if latest_comments.has_next %}
+                            <a href="?page={{ latest_comments.next_page_number }}" class="pagination__btn pagination__arrow" title="Next page"><span>></span></a>
+                        {% endif %}
+                    </div>
                     {% endif %}
                 </div>
             </section>
 
             <section class="section answer__answer">
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and topic.solved == False %}
                 <h2 class="title--section">Your message</h2>
+                <!-- <form class="answer__form" method="post" action="{% url 'topic_detail' topic.id %}?page={{ latest_comments.paginator.num_pages }}#comment_{{ topic.comment_set.last.id|add:1 }}"> -->
                 <form class="answer__form" method="post">
                     {% csrf_token %}
                     <div class="form__line">
                         <div class="form__part form__part--full">
-                            <textarea class="input--classic input--text" name="reply" id="reply" required></textarea>
+                            <textarea class="input--classic input--text" name="reply_signed_in" placeholder="Your message" id="reply_signed_in" 
+                            style="white-space: pre-wrap;" required></textarea>
+                            {% for k, v in form_errors.items %}
+                                {% if k == 'content' %}
+                                    <div class="message__error">{{ v }}</div>
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="form__submit">
-                        <input type="submit" class="btn btn--primary btn--full" value="Send" for="reply">
+                        <input type="submit" class="btn btn--primary btn--full" value="Send" for="reply" title="Send">
                     </div>
                 </form>
+                {% elif topic.solved == True %}
+                <div class="main__intro wrapper--centered">
+                    <p>This topic has been marked as solved.  No more comments may be posted.</p>
+                </div>
                 {% else %}
                 <div class="main__intro wrapper--centered">
-                    <p><a href="{% url 'login' %}">Sign in</a> to comment on this topic</p>
+                    <p id="reply_signed_out"><a href="{% url 'login' %}?next={{ request.path }}#reply_signed_in" title="Sign in">Sign in</a> to comment on this topic</p>
                 </div>
                 {% endif %}
             </section>
@@ -127,25 +186,25 @@
                     {% if 'solved' not in request.path and 'no_replies' not in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='all' %}" class="category__link">All threads</a>
+                        <a href="{% url 'topic_list' filter='all' %}" class="category__link" title="View all topics">All threads</a>
                     </li>
     
                     {% if 'solved' in request.path and 'unsolved' not in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='solved' %}" class="category__link">Solved</a>
+                        <a href="{% url 'topic_list' filter='solved' %}" class="category__link" title="View solved topics">Solved</a>
                     </li>
     
                     {% if 'unsolved' in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='unsolved' %}" class="category__link">Unsolved</a>
+                        <a href="{% url 'topic_list' filter='unsolved' %}" class="category__link" title="View unsolved topics">Unsolved</a>
                     </li>
     
                     {% if 'no_replies' in request.path %}
                     <li class="category__item category__item--current">
                     {% else %} <li class="category__item"> {% endif %}
-                        <a href="{% url 'topic_list' filter='no_replies' %}" class="category__link">No replies</a>
+                        <a href="{% url 'topic_list' filter='no_replies' %}" class="category__link" title="View topics with no replies">No replies</a>
                     </li>
                 </ul>
             </nav>

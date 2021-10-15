@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extend_title %}Profil |{% endblock %}
+
+{% block content %}
+<head>
+    {% if request.user == user %}
+        <title>View My Profile - {{ user.first_name }} {{ user.last_name }} | Django Forum</title>
+    {% else %}
+        <title>View Profile - {{ user.first_name }} {{ user.last_name }} | Django Forum</title>
+    {% endif %}
+</head>
+
+<body>
+    {% if messages %}
+    <div class="message__container">
+        {% for message in messages %}
+            <div class="message__success">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <header class="header">
+        <div class="header__content header__content--user">
+			<span class="banner--user">
+			</span>
+            {% if user == request.user %}
+                <a href="{% url 'edit_profile' %}" class="btn btn--primary btn--small user__edit" title="Edit my profile">Edit my profile</a>
+            {% endif %}
+			<div class="user__header section--centered">
+				<div class="picture__container picture__container--detail">
+					<img class="author__picture author__picture--detail" src="{{ user.get_avatar_url }}" alt="Profile photo of {{ user.user_username }}"/>
+				</div>
+
+				<h1 class="title--header">{{ user.first_name }} {{ user.last_name }}</h1>
+				<!-- <p class="subtitle--user">Author of {{ user.topic_set.count }} topics</p> -->
+				<div>
+					<span class="author__rank author__rank--detail">{{ user.status }}</span>
+				</div>
+			</div>
+		</div>
+    </header>
+
+    <main class="page__content">
+		<section class="wrapper--topics wrapper--centered">
+            {% if user.topic_set.count > 0 %}
+                <h2 class="title--section">The {{ user.topic_set.count }} topics created by {{ user.first_name }} {{ user.last_name }}</h2>
+                <ul class="topics__list topics__list--user">
+                    {% for topic in latest_posts %}
+                    <li class="topic__item card item__wrap">
+                        <a href="{% url 'topic_detail' topic.slug %}" title="Read more...">
+                            <span class="hide">Read more...</span>
+                        </a>
+
+                        <article class="topic__article">
+                            <h3 class="title--topic">{{ topic.title }}</h3>
+
+                            <div class="topic__short">
+                                <p>{{ topic.content|linebreaks }}</p>
+                            </div>
+
+                            <div class="topic__author column column--spaced">
+                                <div class="topic__recap column column--centered">
+                                    <img class="author__picture author__picture--small" src="{{ user.get_avatar_url}}" alt="Profile photo of {{ user.user_username }}" />
+                                    <p class="author__name">Posted by <a href="{% url 'view_profile' user.id %}" title="Visit profile of {{ user.user_username }}" class="author__link">{{ user.first_name }} {{ user.last_name }}</a> {{ topic.pub_date|timesince }}</p>
+                                </div>
+                            </div>
+                        </article>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="pagination__container column column--centered">
+                    {% if latest_posts.has_previous %}
+                        <a href="?page={{ latest_posts.previous_page_number }}" class="pagination__btn pagination__arrow" title="Previous page"><span><</span></a>
+                    {% endif %}
+                    <ul class="pagination__list column column--centered">
+                        {% for i in latest_posts.paginator.page_range %}
+                            {% if latest_posts.number == i%}<li class="pagination__item pagination__item--current">
+                            {% else %}<li class="pagination__item">{% endif %}
+                            <a href="?page={{ i }}" class="pagination__link" title="Go to page {{ i }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if latest_posts.has_next %}
+                        <a href="?page={{ latest_posts.next_page_number }}" class="pagination__btn pagination__arrow" title="Next page"><span>></span></a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <h2 class="title--section">No topics created yet by {{ user.first_name }} {{ user.last_name }}</h2>
+            {% endif %}
+		</section>
+	</main>
+</body>
+{% endblock %}

@@ -1781,3 +1781,43 @@
     text-overflow: ellipsis;
     /* pour le reste du monde */
   }
+
+  .errorlist {
+    list-style: none;
+  }
+
+  .message__container {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    width: auto;
+    justify-content: center;
+    transition: all 0.25s ease 0s;
+  }
+  
+  .message__success {
+    border-radius: 9px;
+    border: 1px solid green;
+    color: green;
+    background: rgba(0, 128, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .message__error {
+    border-radius: 9px;
+    border: 1px solid red;
+    color: red;
+    background: rgba(255, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+  }
+  
+  .comment__icon {
+    padding: 5px;
+    display: block;
+  }
