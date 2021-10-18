@@ -21,7 +21,9 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 # Create your views here.
-def topicsList(request, filter="all", search_query=None):
+def topicsList(request, filter="all", search_query=None): # sortby='pub_date'
+    # if sortby=='pub_date': second_sortby='comment_count'
+    # latest_posts = Topic.objects.annotate(comment_count=Count('comment')).order_by('-'+sortby)
     latest_posts = Topic.objects.order_by('-pub_date')
     if filter == "solved":
         latest_posts = Topic.objects.filter(solved=True).order_by('-pub_date')
@@ -30,7 +32,6 @@ def topicsList(request, filter="all", search_query=None):
     if filter == "no_replies":
         latest_posts = Topic.objects.annotate(comment_count=Count('comment')).filter(comment_count=0).order_by('-pub_date')
     
-    # search_query=None
     if request.method == 'GET' or search_query != None:
         if request.GET.get('search_query'):
             search_query = request.GET.get('search_query')
@@ -40,11 +41,12 @@ def topicsList(request, filter="all", search_query=None):
         paginator = Paginator(latest_posts, 4)
         page_number = request.GET.get('page', 1)
         latest_posts = paginator.page(page_number)
-    
+        
     context = {
         'latest_posts': latest_posts,
         'search_query': search_query,
         'filter': filter,
+        # 'sortby': sortby,
     }
     return render(request, 'main/topic_list.html', context)
 

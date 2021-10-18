@@ -4,7 +4,9 @@
 
 {% block content %}
 <head>
-    {% if 'no_replies' in request.path %}
+    {% if search_query %}
+        <title>Search results for {{ search_query }} | Django Forum</title>
+    {% elif 'no_replies' in request.path %}
         <title>View Topics with No Replies | Django Forum</title>
     {% elif 'unsolved' in request.path %}
         <title>View Unsolved Topics | Django Forum</title>
@@ -43,7 +45,7 @@
                 </ul>
             </nav>
             <h1 class="title--header">
-                {% if search_query %} Search="{{ search_query }}"
+                {% if search_query %} Search for "{{ search_query }}"
                 {% elif 'no_replies' in request.path %} No replies
                 {% elif 'unsolved' in request.path %} Unsolved
                 {% elif 'solved' in request.path %} Solved
@@ -53,7 +55,14 @@
     </header>
 
     <main class="page__content forum__content column--free wrapper--main">
-        <a href="{% url 'topic_create' %}" class="topic__create" title="Create new topic"><span>+</span></a>
+        <!-- {% if filter != 'all' %}
+            <a href="{% url 'topic_list' filter='all' %}" class="back__button" title="Reply to topic"><i class="fa fa-arrow-left mr-2"></i></a>
+        {% endif %} -->
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'topic_create' %}" class="topic__create" title="Create new topic"><span>+</span></a>
+        {% else %}
+            <a href="{% url 'login' %}?next={% url 'topic_create' %}" class="topic__create" title="Create new topic"><span>+</span></a>
+        {% endif %}
 
         <div class="forum__main">
             <section>
@@ -61,6 +70,7 @@
                 <ul class="topics__list">
                     {% for topic in latest_posts %}
                         <li class="topic__item card item__wrap">
+
                             {% if search_query %}<a href="{% url 'topic_detail' slug=topic.slug search_query=search_query %}" title="View topic details">
                             {% else %} <a href="{% url 'topic_detail' slug=topic.slug filter=filter %}" title="View topic details"></a>
                             {% endif %}
@@ -76,7 +86,7 @@
                                         <img class="author__picture author__picture--small"
                                         src="{{ topic.author.get_avatar_url }}">
                                         <p class="author__name">Posted by 
-                                            <a href="{% url 'view_profile' topic.author.id %}" class="author__link" title="View author details">{{ topic.author.user_username }}</a> 
+                                            <a href="{% url 'view_profile' topic.author.id %}" class="author__link" title="View profile of {{ topic.author.first_name }} {{ topic.author.last_name }}">{{ topic.author.user_username }}</a> 
 
                                             {{ topic.pub_date|timesince }} ago</p>
                                         
@@ -111,7 +121,7 @@
                     {% endif %}
                     <ul class="pagination__list column column--centered">
                         {% for i in latest_posts.paginator.page_range %}
-                            {% if latest_posts.number == i%}<li class="pagination__item pagination__item--current">
+                            {% if latest_posts.number == i %}<li class="pagination__item pagination__item--current">
                             {% else %}<li class="pagination__item">{% endif %}
                             <a href="?page={{ i }}" class="pagination__link" title="Go to page {{ i }}">{{ i }}</a>
                             </li>
@@ -129,11 +139,17 @@
 
         <aside class="forum__aside">
             <nav class="categories__menu">
-                <!-- <h2 class="title--category">Sort Topics By</h2>
-                <select class="categories__list">
-                    <option value="pub_date" class="category__link" selected>Publication Date</option>
-                    <option value="comment_count" class="category__link">Number of Comments</option>
-                </select> -->
+                <!-- <h2 class="title--category">Sort Topics By</h2> -->
+                <!-- <ul class="sortby__list">
+                    {% if 'comment_count' not in request.path %}<li class="category__item category__item--current">
+                    {% else %}<li class="category__item">{% endif %}
+                        <a href="{% url 'topic_list' sortby='pub_date' %}" class="category__link" title="Sort by Publication Date">Publication Date</a>
+                    </li>
+                    {% if 'comment_count' in request.path %}<li class="category__item category__item--current">
+                        {% else %}<li class="category__item">{% endif %}
+                        <a href="{% url 'topic_list' sortby='comment_count' %}" class="category__link" title="Sort by Number of Comments">Number of Comments</a>
+                    </li>
+                </ul> -->
                 <h2 class="title--category">Categories</h2>
                 <ul class="categories__list">
                     {% if 'solved' not in request.path and 'no_replies' not in request.path and not search_query %}

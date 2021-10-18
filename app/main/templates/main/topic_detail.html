@@ -49,24 +49,36 @@
 
     <main class="page__content forum__content column--free wrapper--main">
         <!-- <a href="{% url 'topic_create' %}" class="topic__create" title="Reply to topic"><span>+</span></a> -->
+        <!-- {% if search_query %}
+            <a href="{% url 'topic_list' search_query=search_query %}" class="back__button" title="Return to list of topics"><i class="fa fa-arrow-left mr-2"></i></a>
+        {% else %}
+            <a href="{% url 'topic_list' filter=filter %}" class="back__button" title="Return to list of topics"><i class="fa fa-arrow-left mr-2"></i></a>
+        {% endif %} -->
         {% if topic.solved == False %}
             {% if request.user.is_authenticated %}
                 <a href="#reply_signed_in" class="topic__create" title="Reply to topic"><span>+</span></a>
             {% else %}
-                <a href="#reply_signed_out" class="topic__create" title="Reply to topic"><span>+</span></a>
+                <!-- <a href="#reply_signed_out" class="topic__create" title="Reply to topic"><span>+</span></a> -->
+                <a href="{% url 'login' %}?next={{ request.path }}#reply_signed_in" class="topic__create" title="Reply to topic"><span>+</span></a>
             {% endif %}
         {% endif %}
   
         <div class="forum__main">
             <section>
                 <header class="topic__header">
-                    <div class="column column--centered" style='float: right;'>
+                    <div class="column column--spaced">
+                        {% if search_query %}
+                            <a href="{% url 'topic_list' search_query=search_query %}" class="btn btn--primary" title="Return to list of topics"><i class="fa fa-arrow-left mr-2"></i></a>
+                        {% else %}
+                            <a href="{% url 'topic_list' filter=filter %}" class="btn btn--primary" title="Return to list of topics"><i class="fa fa-arrow-left mr-2"></i></a>
+                        {% endif %}
+                    <!-- <div class="column column--centered" style='float: right;'> -->
                         {% if request.user == topic.author and topic.solved == False %}
                             <form method="post">
                                 {% csrf_token %}
-                                <div class="form__submit">
+                                <!-- <div class="form__submit"> -->
                                     <input type="submit" class="btn btn--primary" value="Close this topic" title="Close this topic" name="close_topic_btn">
-                                </div>
+                                <!-- </div> -->
                             </form>
                         {% else %}
                             {% if topic.solved %}
@@ -81,7 +93,7 @@
                     </h1>
                     <div class="answer__header answer__header--main column column--centered">
                         <div class="picture__container">
-                            <a href="{% url 'view_profile' topic.author.id %}"><img class="author__picture" src="{{ topic.author.get_avatar_url }}"></a>
+                            <a href="{% url 'view_profile' topic.author.id %}"title="View profile of {{ topic.author.first_name }} {{ topic.author.last_name }}"><img class="author__picture" src="{{ topic.author.get_avatar_url }}"></a>
                         </div>
                         <div class="answer__author">
                             <div class="column column--centered">
@@ -96,7 +108,7 @@
                     </div>
                 </header>
 
-                <div class="topics__answers">
+                <div class="topics__answers" id="comment_section">
                     {% if topic.comment_set.count == 1 %}<h2 class="title--section">1 Reply</h2>
                     {% elif topic.comment_set.count == 0 %}<h2 class="title--section">No replies yet</h2>
                     {% else %}<h2 class="title--section">{{ topic.comment_set.count }} Replies</h2>
@@ -109,7 +121,8 @@
                             <article class="answer__article">
                                 <div class="answer__header column column--centered">
                                     <div class="picture__container">
-                                        <a href="{% url 'view_profile' comment.author.id %}"><img class="author__picture author__picture--answer" src="{{ comment.author.get_avatar_url }}"></a>
+                                        <a href="{% url 'view_profile' comment.author.id %}"><img class="author__picture author__picture--answer" src="{{ comment.author.get_avatar_url }}"
+                                            title="View profile of {{ comment.author.first_name }} {{ comment.author.last_name }}"></a>
                                     </div>
                                     <div class="answer__author">
                                         <div class="column column--centered">
@@ -128,18 +141,18 @@
                     </ul>
                     <div class="pagination__container column column--centered">
                         {% if latest_comments.has_previous %}
-                            <a href="?page={{ latest_comments.previous_page_number }}" class="pagination__btn pagination__arrow" title="Previous page"><span><</span></a>
+                            <a href="?page={{ latest_comments.previous_page_number }}#comment_section" class="pagination__btn pagination__arrow" title="Previous page"><span><</span></a>
                         {% endif %}
                         <ul class="pagination__list column column--centered">
                             {% for i in latest_comments.paginator.page_range %}
                                 {% if latest_comments.number == i%}<li class="pagination__item pagination__item--current">
                                 {% else %}<li class="pagination__item">{% endif %}
-                                <a href="?page={{ i }}" class="pagination__link" title="Go to page {{ i }}">{{ i }}</a>
+                                <a href="?page={{ i }}#comment_section" class="pagination__link" title="Go to page {{ i }}">{{ i }}</a>
                                 </li>
                             {% endfor %}
                         </ul>
                         {% if latest_comments.has_next %}
-                            <a href="?page={{ latest_comments.next_page_number }}" class="pagination__btn pagination__arrow" title="Next page"><span>></span></a>
+                            <a href="?page={{ latest_comments.next_page_number }}#comment_section" class="pagination__btn pagination__arrow" title="Next page"><span>></span></a>
                         {% endif %}
                     </div>
                     {% endif %}
@@ -164,7 +177,7 @@
                         </div>
                     </div>
                     <div class="form__submit">
-                        <input type="submit" class="btn btn--primary btn--full" value="Send" for="reply" title="Send">
+                        <input type="submit" class="btn btn--primary btn--full" value="Post Comment" for="reply_signed_in" title="Post Comment">
                     </div>
                 </form>
                 {% elif topic.solved == True %}
@@ -173,7 +186,8 @@
                 </div>
                 {% else %}
                 <div class="main__intro wrapper--centered">
-                    <p id="reply_signed_out"><a href="{% url 'login' %}?next={{ request.path }}#reply_signed_in" title="Sign in">Sign in</a> to comment on this topic</p>
+                    <p id="reply_signed_out">Sign in to comment.</p>
+                    <a href="{% url 'login' %}?next={{ request.path }}#reply_signed_in" class="btn btn--primary" title="Sign In">Sign In</a>
                 </div>
                 {% endif %}
             </section>

@@ -68,7 +68,7 @@
                     </div>
                 {% else %}
                     <div class="main__intro wrapper--centered">
-                        <p><a href="{% url 'login' %}?next={{request.path}}" title="Sign in">Sign in</a> to create a new topic.</p>
+                        <p><a href="{% url 'login' %}?next={{request.path}} %}" title="Sign in">Sign in</a> to create a new topic.</p>
                     </div>
                 {% endif %}
             </section>

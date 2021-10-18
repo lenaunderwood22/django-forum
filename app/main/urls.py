@@ -27,12 +27,18 @@ main_urlpatterns = [
     # path('topics/new/', main.views.TopicCreateTempalteView.as_view(), name='topic_create'),
 
     path('profile/edit', views.editProfile, name='edit_profile'),
+
     path('profile/view/<int:user_id>/', views.viewProfile, name='view_profile'),
     path('profile/view', views.getProfile, name='view_profile'),
+
     path('topics/', views.topicsList, name='topic_list'),
     path('topics/?filter=<str:filter>', views.topicsList, name='topic_list'),
     path('topics/?search_query=<str:search_query>', views.topicsList, name='topic_list'),
+    path('topics/?sortby=<str:sortby>', views.topicsList, name='topic_list'),
+    # path('topics/?filter=<str:filter>?sortby=<str:sortby>', views.topicsList, name='topic_list'),
+
     path('topics/new/', views.createTopic, name='topic_create'),
+
     path('topics/<slug:slug>/', views.replyTopic, name='topic_detail'),
     path('topics/<slug:slug>/?filter=<str:filter>', views.replyTopic, name='topic_detail'),
     path('topics/<slug:slug>/?search_query=<str:search_query>', views.replyTopic, name='topic_detail'),

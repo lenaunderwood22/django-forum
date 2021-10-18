@@ -1821,3 +1821,48 @@
     padding: 5px;
     display: block;
   }
+
+  .sortby__list {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  .sortby__item {
+    /* border:rgba(0, 128, 0, 0.2); */
+    /* background:rgba(0, 128, 0, 0.2); */
+    display: block;
+    font-size: 1.0666666667em;
+    border: 1px solid red;
+    color: red;
+    background: rgba(255, 0, 0, 0.2);
+  }
+
+  .back__button {
+    position: fixed;
+    top: 150px;
+    right: 4.7619047619%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #3C54FA;
+    color: white;
+    font-weight: 700;
+    font-size: 3.5333333333em;
+    display: flex;
+    z-index: 5;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    box-shadow: 2px 2px 10px 2px rgba(1, 1, 1, 0.2);
+  }
+  .back__button span {
+    display: inline-block;
+    line-height: 0.5em;
+    position: relative;
+    top: -4px;
+  }
+  .back__button:hover {
+    transform: scale(1.1);
+    color: white;
+    background: #0a28f9;
+  }
